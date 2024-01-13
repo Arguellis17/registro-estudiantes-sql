@@ -18,7 +18,7 @@ public class Registro extends javax.swing.JFrame {
      */
     public Registro() {
         initComponents();
-        setTitle("Colegio: Registro Estudiante");
+        setTitle("Registro Estudiante");
         setResizable(false); // Evitar que el usuario modifique la ventana
         setLocationRelativeTo(null); // Mostrar la ventana en el centro
     }
@@ -58,8 +58,14 @@ public class Registro extends javax.swing.JFrame {
 
         btnListado.setText("Ver listado");
         btnListado.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnListado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnListadoActionPerformed(evt);
+            }
+        });
 
         btnRegistrar.setText("Registrar");
+        btnRegistrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRegistrarActionPerformed(evt);
@@ -137,44 +143,53 @@ public class Registro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        
-        try{
-            
+
+        try {
+
             // Se establece la conexión creando el objeto de tipo connection
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
-            
+
             // Ahora, es necesario preparar la instrucción con un objeto del tipo PreparedStatement
             PreparedStatement pst = cn.prepareStatement("insert into estudiante values(?,?,?,?)");
-            
+
             // Una vez mandada la instrucción, se procede a tomar los datos de la gui 
             // Este valor esta de auto incremento en la base de datos
-            pst.setString(1, "0"); // Codigo 
-           // El metodo trim elimina espacios del incio y el final de la cadena
+            pst.setString(1, txtCodigo.getText().trim()); // Codigo 
+            // El metodo trim elimina espacios del incio y el final de la cadena
             pst.setString(2, txtNombre.getText().trim()); // Nombre 
             pst.setString(3, txtApellido.getText().trim()); // Apellido
-            
+
             // Obtener la información del combo box
             String semestreSeleccionado = cmbSemestre.getSelectedItem().toString();
             pst.setString(4, semestreSeleccionado);
-            
+
             // Una vez finalizada la toma de datos, se envian a la base de datos 
             pst.executeUpdate();
-            
+
             // Limpiamos los campos
             txtCodigo.setText("");
             txtNombre.setText("");
             txtApellido.setText("");
-            cmbSemestre.setSelectedIndex(1);
-            
+            cmbSemestre.setSelectedIndex(0);
+
             JOptionPane.showMessageDialog(null, "Registro exitoso!");
-            
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             System.err.println("Error de conexión!!");
         }
-            
-        
+
+
     }//GEN-LAST:event_btnRegistrarActionPerformed
+
+    private void btnListadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListadoActionPerformed
+        // TODO add your handling code here:
+
+        this.dispose();
+        Listado o = new Listado();
+        o.setVisible(true);
+
+        System.out.println("XDD");
+    }//GEN-LAST:event_btnListadoActionPerformed
 
     /**
      * @param args the command line arguments
