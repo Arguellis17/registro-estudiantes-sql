@@ -14,14 +14,14 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author argue
  */
-public class Registro extends javax.swing.JFrame {
+public class Modificacion extends javax.swing.JFrame {
 
     /**
      * Creates new form Registro
      */
-    public Registro() {
+    public Modificacion() {
         initComponents();
-        setTitle("Registro");
+        setTitle("Modificar");
         setResizable(false); // Evitar que el usuario modifique la ventana
         setLocationRelativeTo(null); // Mostrar la ventana en el centro
     }
@@ -40,10 +40,10 @@ public class Registro extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        txtCodigo = new javax.swing.JTextField();
-        txtNombre = new javax.swing.JTextField();
-        txtApellido = new javax.swing.JTextField();
-        cmbSemestre = new javax.swing.JComboBox<>();
+        txtCodigoMD = new javax.swing.JTextField();
+        txtNombreMD = new javax.swing.JTextField();
+        txtApellidoMD = new javax.swing.JTextField();
+        cmbSemestreMD = new javax.swing.JComboBox<>();
         btnListado = new javax.swing.JButton();
         btnRegistrar = new javax.swing.JButton();
 
@@ -57,9 +57,9 @@ public class Registro extends javax.swing.JFrame {
 
         jLabel4.setText("Semestre");
 
-        cmbSemestre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" }));
+        cmbSemestreMD.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" }));
 
-        btnListado.setText("Ver listado");
+        btnListado.setText("Volver");
         btnListado.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnListado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -67,7 +67,7 @@ public class Registro extends javax.swing.JFrame {
             }
         });
 
-        btnRegistrar.setText("Registrar");
+        btnRegistrar.setText("Terminar");
         btnRegistrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -90,7 +90,7 @@ public class Registro extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel4)
                             .addGap(18, 18, 18)
-                            .addComponent(cmbSemestre, 0, 126, Short.MAX_VALUE))
+                            .addComponent(cmbSemestreMD, 0, 126, Short.MAX_VALUE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel1)
@@ -98,9 +98,9 @@ public class Registro extends javax.swing.JFrame {
                                 .addComponent(jLabel3))
                             .addGap(25, 25, 25)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtCodigo)
-                                .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-                                .addComponent(txtApellido)))))
+                                .addComponent(txtCodigoMD)
+                                .addComponent(txtNombreMD, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                                .addComponent(txtApellidoMD)))))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -109,19 +109,19 @@ public class Registro extends javax.swing.JFrame {
                 .addGap(49, 49, 49)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCodigoMD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNombreMD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtApellidoMD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(cmbSemestre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbSemestreMD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(57, 57, 57)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnListado)
@@ -153,32 +153,27 @@ public class Registro extends javax.swing.JFrame {
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
 
             // Ahora, es necesario preparar la instrucción con un objeto del tipo PreparedStatement
-            PreparedStatement pst = cn.prepareStatement("insert into estudiante values(?,?,?,?)");
+            PreparedStatement pst = cn.prepareStatement("UPDATE estudiante set nombre = ? , apellido = ?, semestre = ? WHERE codigo = " + txtCodigoMD.getText().trim()  );
 
-            // Una vez mandada la instrucción, se procede a tomar los datos de la gui 
-            // Este valor esta de auto incremento en la base de datos
-            pst.setString(1, txtCodigo.getText().trim()); // Codigo 
+            
             // El metodo trim elimina espacios del incio y el final de la cadena
-            pst.setString(2, txtNombre.getText().trim()); // Nombre 
-            pst.setString(3, txtApellido.getText().trim()); // Apellido
-
-            // Obtener la información del combo box
-            String semestreSeleccionado = cmbSemestre.getSelectedItem().toString();
-            pst.setString(4, semestreSeleccionado);
+            pst.setString(1, txtNombreMD.getText().trim()); // Nombre 
+            pst.setString(2, txtApellidoMD.getText().trim()); // Apellido
+            pst.setString(3, cmbSemestreMD.getSelectedItem().toString()); // Semestre
 
             // Una vez finalizada la toma de datos, se envian a la base de datos 
             pst.executeUpdate();
 
             // Limpiamos los campos
-            txtCodigo.setText("");
-            txtNombre.setText("");
-            txtApellido.setText("");
-            cmbSemestre.setSelectedIndex(0);
+            txtCodigoMD.setText("");
+            txtNombreMD.setText("");
+            txtApellidoMD.setText("");
+            cmbSemestreMD.setSelectedIndex(0);
 
-            JOptionPane.showMessageDialog(null, "Registro exitoso!");
+            JOptionPane.showMessageDialog(null, "Modificacion exitosa!");
 
         } catch (Exception e) {
-            System.err.println("Error de conexión!!");
+            System.err.println("Error de conexión!!" + e);
         }
 
 
@@ -250,27 +245,28 @@ public class Registro extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Registro.class
+            java.util.logging.Logger.getLogger(Modificacion.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Registro.class
+            java.util.logging.Logger.getLogger(Modificacion.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Registro.class
+            java.util.logging.Logger.getLogger(Modificacion.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Registro.class
+            java.util.logging.Logger.getLogger(Modificacion.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Registro().setVisible(true);
+                new Modificacion().setVisible(true);
             }
         });
     }
@@ -278,14 +274,14 @@ public class Registro extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnListado;
     public javax.swing.JButton btnRegistrar;
-    public javax.swing.JComboBox<String> cmbSemestre;
+    public javax.swing.JComboBox<String> cmbSemestreMD;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     public javax.swing.JPanel jPanel1;
-    public javax.swing.JTextField txtApellido;
-    public javax.swing.JTextField txtCodigo;
-    public javax.swing.JTextField txtNombre;
+    public javax.swing.JTextField txtApellidoMD;
+    public javax.swing.JTextField txtCodigoMD;
+    public javax.swing.JTextField txtNombreMD;
     // End of variables declaration//GEN-END:variables
 }
