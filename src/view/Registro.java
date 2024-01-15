@@ -7,6 +7,8 @@ package view;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -145,10 +147,78 @@ public class Registro extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Método para verificar si ya existe un estudiante con el mismo código
+    private boolean existeEstudianteConCodigo(String codigo) throws SQLException {
+        
+        // Nos conectamos a la base de datos
+        Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
+
+        // Consulta para verificar si hay un estudiante con el código ingresado
+        String selectQuery = "SELECT * FROM estudiante WHERE codigo = ?";
+        try (PreparedStatement selectPst = cn.prepareStatement(selectQuery)) {
+            selectPst.setString(1, codigo);
+
+            // Ejecutamos la consulta
+            try (ResultSet rs = selectPst.executeQuery()) {
+                // Si hay un estudiante con el código ingresado, devuelve true
+                return rs.next();
+            }
+        }
+    }
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
 
         try {
+            // Validacion de campos
+            if (txtCodigo.getText().trim().isEmpty() || txtNombre.getText().trim().isEmpty()
+                    || txtApellido.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Campos obligatorios", "Advertencia", JOptionPane.WARNING_MESSAGE);
 
+            }
+            // Validar que se ingresa un numero en el codigo
+            try {
+                Integer.parseInt(txtCodigo.getText().trim());
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "El código debe ser un numero", "Advertencia", JOptionPane.WARNING_MESSAGE);
+
+            }
+
+            try {
+                // Verificar si ya existe un estudiante con el mismo código
+                String codigoIngresado = txtCodigo.getText().trim();
+                if (existeEstudianteConCodigo(codigoIngresado)) {
+                    JOptionPane.showMessageDialog(null, "Ya hay un estudiante registrado con ese código","Error",JOptionPane.ERROR_MESSAGE);
+
+                }
+            } catch (Exception e) {
+
+            }
+            try {
+
+                String nombreIngresado = txtNombre.getText().trim();
+                String apellidoIngresado = txtApellido.getText().trim();
+
+                // Utilizar una expresión regular para verificar si el texto contiene solo letras
+                // El patrón "[a-zA-Z]+" significa una o más letras (mayúsculas o minúsculas)
+                Pattern pattern = Pattern.compile("[a-zA-Z]+");
+
+                // Validar el campo de nombre
+                Matcher matcherNombre = pattern.matcher(nombreIngresado);
+                if (!matcherNombre.matches()) {
+                    JOptionPane.showMessageDialog(null, "Solo se permiten letras en el campo de Nombre", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    return;  // Sale del método si la validación no es exitosa
+                }
+
+                // Validar el campo de apellido
+                Matcher matcherApellido = pattern.matcher(apellidoIngresado);
+                if (!matcherApellido.matches()) {
+                    JOptionPane.showMessageDialog(null, "Solo se permiten letras en el campo de Apellido", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    return;  // Sale del método si la validación no es exitosa
+                }
+
+            } catch (Exception e) {
+
+            }
             // Se establece la conexión creando el objeto de tipo connection
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
 
