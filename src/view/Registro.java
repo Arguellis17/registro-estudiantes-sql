@@ -5,7 +5,10 @@
 package view;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -185,10 +188,48 @@ public class Registro extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         this.dispose();
-        Listado o = new Listado();
-        o.setVisible(true);
 
-        System.out.println("XDD");
+        try {
+            Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
+            PreparedStatement pst = cn.prepareStatement("SELECT * from estudiante");
+            ResultSet rs = pst.executeQuery(); // Traer los datos y almacenarlos
+
+            // Crear una instancia de Listado
+            Listado verListado = new Listado();
+
+            DefaultTableModel model = (DefaultTableModel) verListado.tblListado.getModel();
+            model.setRowCount(0);
+
+            try {
+                // Iterar sobre los resultados y agregarlos al modelo de la tabla
+                while (rs.next()) {
+                    Object[] fila = new Object[4];
+                    // Configurar fila con los datos del resultado
+                    // Asegúrate de cambiar los índices de las columnas según tu esquema de base de datos
+                    fila[0] = rs.getInt("Codigo");
+                    fila[1] = rs.getString("Nombre");
+                    fila[2] = rs.getString("Apellido");
+                    fila[3] = rs.getString("Semestre");
+                    // ... Continuar con las demás columnas
+
+                    // Agregar la fila al modelo de la tabla
+                    model.addRow(fila);
+                }
+
+                // Mover la llamada a setVisible(true) fuera del bucle
+                verListado.setVisible(true);
+
+            } catch (SQLException e) {
+                System.out.println("Error al procesar los resultados: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Otro error: " + e.getMessage());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al conectar con la base de datos: " + e.getMessage());
+        }
+
+
     }//GEN-LAST:event_btnListadoActionPerformed
 
     /**
@@ -205,16 +246,24 @@ public class Registro extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Registro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Registro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Registro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Registro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Registro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Registro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Registro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Registro.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -229,14 +278,14 @@ public class Registro extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnListado;
     public javax.swing.JButton btnRegistrar;
-    private javax.swing.JComboBox<String> cmbSemestre;
+    public javax.swing.JComboBox<String> cmbSemestre;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     public javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField txtApellido;
-    private javax.swing.JTextField txtCodigo;
-    private javax.swing.JTextField txtNombre;
+    public javax.swing.JTextField txtApellido;
+    public javax.swing.JTextField txtCodigo;
+    public javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
 }

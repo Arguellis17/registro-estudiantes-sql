@@ -4,6 +4,10 @@
  */
 package view;
 
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author argue
@@ -31,6 +35,10 @@ public class Listado extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         btnVolverRegistro = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblListado = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -42,19 +50,69 @@ public class Listado extends javax.swing.JFrame {
             }
         });
 
+        tblListado.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Codigo", "Nombre", "Apellido", "Semestre"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblListado.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jScrollPane2.setViewportView(tblListado);
+
+        jButton1.setText("Modificar");
+
+        jButton2.setText("Eliminar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(btnVolverRegistro)
-                .addContainerGap(293, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addGap(56, 56, 56)
+                        .addComponent(jButton2))
+                    .addComponent(btnVolverRegistro)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(215, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(35, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addGap(10, 10, 10)
                 .addComponent(btnVolverRegistro)
                 .addGap(16, 16, 16))
         );
@@ -63,11 +121,16 @@ public class Listado extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 26, Short.MAX_VALUE))
         );
 
         pack();
@@ -75,11 +138,95 @@ public class Listado extends javax.swing.JFrame {
 
     private void btnVolverRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverRegistroActionPerformed
         // TODO add your handling code here:
-        
+
         this.dispose();
         Registro ver = new Registro();
         ver.setVisible(true);
     }//GEN-LAST:event_btnVolverRegistroActionPerformed
+
+    private void actualizarTabla() {
+
+        try {
+            Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
+
+            try {
+                PreparedStatement pst = cn.prepareStatement("SELECT * from estudiante");
+                ResultSet rs = pst.executeQuery(); // Almacenamos los datos en el objeto ResultSet
+
+                // Obtenemos el modelo de la tabla
+                DefaultTableModel model = (DefaultTableModel) tblListado.getModel();
+
+                // Evita que se clonen datos en el modelo de la tabla, reiniciandolo
+                model.setRowCount(0);
+
+                // Mientras haya info en el objeto ResulSet
+                while (rs.next()) {
+                    Object[] fila = new Object[4];
+                    fila[0] = rs.getInt("Codigo");
+                    fila[1] = rs.getString("Nombre");
+                    fila[2] = rs.getString("Apellido");
+                    fila[3] = rs.getString("Semestre");
+
+                    model.addRow(fila);
+
+                }
+
+            } catch (SQLException e) {
+
+            }
+
+        } catch (Exception e) {
+
+            System.out.println(e);
+        }
+
+    }
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+
+        // Se toma el dato ingresado en la ventana
+        String codigoIngresado = JOptionPane.showInputDialog(null, "Ingresa el código a eliminar");
+
+        try {
+            // Nos conectamos a la base de datos
+            Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
+
+            // Consulta para verificar si el estudiante con el código ingresado existe
+            String selectQuery = "SELECT * FROM estudiante WHERE codigo = ?";
+            try (PreparedStatement selectPst = cn.prepareStatement(selectQuery)) {
+                // Ingresamos el código que se pasó por el JOptionPane para que se compare con el que hay en la BD
+                selectPst.setString(1, codigoIngresado);
+
+                // Ejecutamos la consulta
+                try (ResultSet rs = selectPst.executeQuery()) {
+                    // Verificamos si hay un estudiante con el código ingresado
+                    if (rs.next()) {
+                        // El estudiante con el código ingresado existe, ahora podemos eliminarlo
+                        String deleteQuery = "DELETE FROM estudiante WHERE codigo = ?";
+                        try (PreparedStatement deletePst = cn.prepareStatement(deleteQuery)) {
+                            // Ingresamos el código que se pasó por el JOptionPane para que se compare con el que hay en la BD
+                            deletePst.setString(1, codigoIngresado);
+
+                            // Mandamos la instrucción DELETE
+                            int rowsAffected = deletePst.executeUpdate();
+
+                            if (rowsAffected > 0) {
+                                JOptionPane.showMessageDialog(null, "Se eliminó correctamente!");
+                                actualizarTabla();
+                            }
+                        }
+                    } else {
+                        // No hay un estudiante con el código ingresado
+                        System.out.println("Estudiante no encontrado");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar estudiante: " + e);
+        }
+
+
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -118,6 +265,10 @@ public class Listado extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnVolverRegistro;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane2;
+    public javax.swing.JTable tblListado;
     // End of variables declaration//GEN-END:variables
 }
