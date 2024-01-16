@@ -4,7 +4,8 @@ Este proyecto muestra el manejo de bases de datos utilizando un servidor local p
 ## 🔍 Características del programa 🔍  
 - __IDE Netbeans 20:__ Proporciona herramientas y funciones avanzadas para facilitar la creación, depuración y mantenimiento de aplicaciones Java
 - __JDK 17:__ Es un conjunto de herramientas de desarrollo de software que proporciona las herramientas y recursos necesarios para desarrollar, compilar y ejecutar aplicaciones Java.
-- __SQL BD:__ En el proyecto se dejo la base de datos del colegio, para ello, debes de importarla a tu servidor de PHP. 
+- __SQL BD:__ En el proyecto se dejo la base de datos del colegio, para ello, debes de importarla a tu servidor de PHP.
+
 ## 👀 Vistas de la GUI 👀
 [![1.png](https://i.postimg.cc/Fs28Bvth/1.png)](https://postimg.cc/4mQWYrN0)  
 [![2.png](https://i.postimg.cc/LsHR6PHy/2.png)](https://postimg.cc/5XkDs6Qv)  
