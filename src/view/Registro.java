@@ -5,8 +5,6 @@
 package view;
 
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
@@ -48,6 +46,7 @@ public class Registro extends javax.swing.JFrame {
         cmbSemestre = new javax.swing.JComboBox<>();
         btnListado = new javax.swing.JButton();
         btnRegistrar = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -77,6 +76,9 @@ public class Registro extends javax.swing.JFrame {
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jLabel5.setText("College SQL");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -102,13 +104,16 @@ public class Registro extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(txtCodigo)
                                 .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-                                .addComponent(txtApellido)))))
+                                .addComponent(txtApellido)))
+                        .addComponent(jLabel5)))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(49, 49, 49)
+                .addGap(15, 15, 15)
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -128,7 +133,7 @@ public class Registro extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnListado)
                     .addComponent(btnRegistrar))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -173,7 +178,7 @@ public class Registro extends javax.swing.JFrame {
                     || txtApellido.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Campos obligatorios", "Advertencia", JOptionPane.WARNING_MESSAGE);
 
-            }
+            }else{
             // Validar que se ingresa un numero en el codigo
             try {
                 Integer.parseInt(txtCodigo.getText().trim());
@@ -246,7 +251,7 @@ public class Registro extends javax.swing.JFrame {
             cmbSemestre.setSelectedIndex(0);
 
             JOptionPane.showMessageDialog(null, "Registro exitoso!");
-
+            }
         } catch (Exception e) {
             System.err.println("Error de conexión!!");
         }
@@ -353,6 +358,7 @@ public class Registro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     public javax.swing.JPanel jPanel1;
     public javax.swing.JTextField txtApellido;
     public javax.swing.JTextField txtCodigo;

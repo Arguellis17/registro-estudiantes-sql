@@ -8,6 +8,20 @@ import java.sql.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+// Paquetes necesarios para generar el pdf
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  *
  * @author argue
@@ -97,6 +111,12 @@ public class Listado extends javax.swing.JFrame {
         });
 
         jButton3.setText("Generar PDF");
+        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -156,12 +176,12 @@ public class Listado extends javax.swing.JFrame {
         Registro ver = new Registro();
         ver.setVisible(true);
     }//GEN-LAST:event_btnVolverRegistroActionPerformed
-
+    
     private void actualizarTabla() {
-
+        
         try {
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
-
+            
             try {
                 PreparedStatement pst = cn.prepareStatement("SELECT * from estudiante");
                 ResultSet rs = pst.executeQuery(); // Almacenamos los datos en el objeto ResultSet
@@ -179,27 +199,27 @@ public class Listado extends javax.swing.JFrame {
                     fila[1] = rs.getString("Nombre");
                     fila[2] = rs.getString("Apellido");
                     fila[3] = rs.getString("Semestre");
-
+                    
                     model.addRow(fila);
-
+                    
                 }
-
+                
             } catch (SQLException e) {
-
+                
             }
-
+            
         } catch (Exception e) {
-
+            
             System.out.println(e);
         }
-
+        
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
         // Se toma el dato ingresado en la ventana
         String codigoIngresado = JOptionPane.showInputDialog(null, "Ingresa el código a eliminar");
-
+        
         try {
             // Nos conectamos a la base de datos
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
@@ -222,7 +242,7 @@ public class Listado extends javax.swing.JFrame {
 
                             // Mandamos la instrucción DELETE
                             int rowsAffected = deletePst.executeUpdate();
-
+                            
                             if (rowsAffected > 0) {
                                 JOptionPane.showMessageDialog(null, "Se eliminó correctamente!");
                                 actualizarTabla();
@@ -237,7 +257,7 @@ public class Listado extends javax.swing.JFrame {
         } catch (SQLException e) {
             System.err.println("Error al eliminar estudiante: " + e);
         }
-
+        
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -248,8 +268,99 @@ public class Listado extends javax.swing.JFrame {
         this.dispose();
         abrirVentana.setVisible(true);
         
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+        // Se crea el documento
+        Document documento = new Document();
+        
+        try {
+            // Colocamos el nombre del documento
+            PdfWriter.getInstance(documento, new FileOutputStream("Listado estudiantes.pdf"));
+
+            // Agregamos un header al documento
+            Image header = Image.getInstance("src/img/header.png");
+
+            // Modificamos el escalado de la imagen
+            header.scaleToFit(650, 1000);
+
+            // Centramos la imagen
+            header.setAlignment(Chunk.ALIGN_CENTER);
+
+            // Ahora, agregamos un poco de texto al pdf
+            Paragraph parrafo = new Paragraph();
+            parrafo.setAlignment(Chunk.ALIGN_CENTER);
+            // Escribiendo en el PDF...
+            parrafo.add("Formato creado por Juan Arguello ©");
+            parrafo.setFont(FontFactory.getFont("Tahoma", 18, Font.BOLD, BaseColor.DARK_GRAY));
+
+            // Titulo de la tabla
+            parrafo.add("\n\nListado de estudiantes\n\n");
+
+            // Abriendo el documento...
+            documento.open();
+            // Se añaden los objetos header y parrafo al documento
+            documento.add(header);
+            documento.add(parrafo);
+
+            // Se procede a crear la tabla
+            // Dentro del parentesis se indica el numero de columnas 
+            PdfPTable tabla = new PdfPTable(4);
+
+            // Creando los titulos de cada columna
+            Paragraph h1 = new Paragraph("Codigo", FontFactory.getFont("Tahoma", 12, Font.BOLD));
+            Paragraph h2 = new Paragraph("Nombre", FontFactory.getFont("Tahoma", 12, Font.BOLD));
+            Paragraph h3 = new Paragraph("Apellido", FontFactory.getFont("Tahoma", 12, Font.BOLD));
+            Paragraph h4 = new Paragraph("Semestre", FontFactory.getFont("67e4Tahoma", 12, Font.BOLD));
+            
+
+            // Se agregan los titulos a la tabla
+            tabla.addCell(h1);
+            tabla.addCell(h2);
+            tabla.addCell(h3);
+            tabla.addCell(h4);
+
+            // Instanciamos un try-catch para conectarnos a la base de datos y traer la info de los estudiantes
+            try {
+                Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
+                PreparedStatement pst = cn.prepareStatement("SELECT * from estudiante");
+
+                // Guardamos la info de la base de datos en un objeto ResultSet
+                ResultSet rs = pst.executeQuery();
+
+                // Si hay informacion de los estudiantes
+                if (rs.next()) {
+
+                    // Agregarla a la tabla
+                    do {
+                        tabla.addCell(rs.getString(1));
+                        tabla.addCell(rs.getString(2));
+                        tabla.addCell(rs.getString(3));
+                        tabla.addCell(rs.getString(4));
+
+                        // mientras siga habiendo info
+                    } while (rs.next());
+                    
+                    // Una vez se termine de agregar la informacion a la tabla, agregarla al documento
+                    documento.add(tabla);
+                }
+                
+            } catch (DocumentException | SQLException e) {
+                System.out.println("Error en la conexion  " + e);
+            }
+            
+            // Cerramos el documento
+            documento.close();
+            // Se informa que se creo el reporte
+            JOptionPane.showMessageDialog(null, "Reporte generado!");
+            
+        } catch (DocumentException | IOException e) {
+            
+            System.out.println("Error en el documento " + e);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments

@@ -4,9 +4,8 @@
  */
 package view;
 
+import java.awt.HeadlessException;
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -145,17 +144,57 @@ public class Modificacion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private boolean existeEstudiante(String codigo) throws SQLException {
+
+        // Nos conectamos a la base de datos
+        Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
+
+        // Consulta para verificar si hay un estudiante con el código ingresado
+        String selectQuery = "SELECT * FROM estudiante WHERE codigo = ?";
+        try (PreparedStatement selectPst = cn.prepareStatement(selectQuery)) {
+            selectPst.setString(1, codigo);
+
+            // Ejecutamos la consulta
+            try (ResultSet rs = selectPst.executeQuery()) {
+                // Si hay un estudiante con el código ingresado, devuelve true
+                return rs.next();
+            }
+        }
+
+    }
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
 
+        // Validacion de campos
+        if (txtCodigoMD.getText().trim().isEmpty() || txtNombreMD.getText().trim().isEmpty()
+                || txtApellidoMD.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Campos obligatorios", "Advertencia", JOptionPane.WARNING_MESSAGE);
+
+        }else{
+        // Validar que se ingresa un numero en el codigo
+        try {
+            Integer.parseInt(txtCodigoMD.getText().trim());
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "El código debe ser un numero", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+        try {
+            String codigoIngresado = txtCodigoMD.getText().trim();
+            if (existeEstudiante(codigoIngresado)) {
+                JOptionPane.showMessageDialog(null, "Ya hay un estudiante registrado con ese código", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (HeadlessException | SQLException e) {
+            System.err.println("Error " + e);
+
+        }
         try {
 
             // Se establece la conexión creando el objeto de tipo connection
             Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/colegio", "root", "");
 
             // Ahora, es necesario preparar la instrucción con un objeto del tipo PreparedStatement
-            PreparedStatement pst = cn.prepareStatement("UPDATE estudiante set nombre = ? , apellido = ?, semestre = ? WHERE codigo = " + txtCodigoMD.getText().trim()  );
+            PreparedStatement pst = cn.prepareStatement("UPDATE estudiante set nombre = ? , apellido = ?, semestre = ? WHERE codigo = " + txtCodigoMD.getText().trim());
 
-            
             // El metodo trim elimina espacios del incio y el final de la cadena
             pst.setString(1, txtNombreMD.getText().trim()); // Nombre 
             pst.setString(2, txtApellidoMD.getText().trim()); // Apellido
@@ -175,7 +214,7 @@ public class Modificacion extends javax.swing.JFrame {
         } catch (Exception e) {
             System.err.println("Error de conexión!!" + e);
         }
-
+        }
 
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
